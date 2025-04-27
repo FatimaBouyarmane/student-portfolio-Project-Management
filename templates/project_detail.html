@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - Student Portfolio{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('portfolio') }}">Portfolio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ project.title }}</li>
+      </ol>
+    </nav>
+    
+    <h1 class="mb-3">{{ project.title }}</h1>
+    
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="mb-4">
+          <h4>Description</h4>
+          <p>{{ project.description or "No description provided." }}</p>
+        </div>
+        
+        {% if project.technologies %}
+        <div class="mb-4">
+          <h4>Technologies</h4>
+          <div>
+            {% for tech in project.technologies.split(',') %}
+            <span class="badge bg-secondary me-1">{{ tech.strip() }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="d-flex flex-wrap">
+          {% if project.repo_url %}
+          <a href="{{ project.repo_url }}" target="_blank" class="btn btn-outline-primary me-2 mb-2">
+            <i class="fab fa-github me-1"></i>View on GitHub
+          </a>
+          {% endif %}
+          
+          {% if project.live_url %}
+          <a href="{{ project.live_url }}" target="_blank" class="btn btn-outline-success me-2 mb-2">
+            <i class="fas fa-external-link-alt me-1"></i>Live Demo
+          </a>
+          {% endif %}
+          
+          {% if project.user_id == current_user.id %}
+          <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline-secondary mb-2">
+            <i class="fas fa-edit me-1"></i>Edit Project
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-footer bg-dark text-muted d-flex justify-content-between">
+        <div>Added: {{ project.created_at.strftime('%B %d, %Y') }}</div>
+        <div>Last updated: {{ project.last_updated.strftime('%B %d, %Y') }}</div>
+      </div>
+    </div>
+    
+    <div class="comments-section">
+      <h3 class="mb-3">Comments</h3>
+      
+      {% if current_user.is_authenticated %}
+      <div class="card bg-dark border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('add_comment', project_id=project.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              {{ form.content.label(class="form-label") }}
+              {% if form.content.errors %}
+                {{ form.content(class="form-control is-invalid", rows=3) }}
+                <div class="invalid-feedback">
+                  {% for error in form.content.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ form.content(class="form-control", rows=3) }}
+              {% endif %}
+            </div>
+            <div class="d-flex justify-content-end">
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if comments %}
+      <div class="comments-list">
+        {% for comment in comments %}
+        <div class="comment-item bg-dark p-3 rounded">
+          <div class="d-flex justify-content-between">
+            <div class="fw-bold">{{ comment.author.username }}</div>
+            <div class="text-muted small">{{ comment.created_at.strftime('%B %d, %Y at %H:%M') }}</div>
+          </div>
+          <div class="mt-2">{{ comment.content }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-4">
+        <p class="text-muted">No comments yet. Be the first to leave a comment!</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+      <div class="card-header bg-dark">
+        <h5 class="mb-0">Project Author</h5>
+      </div>
+      <div class="card-body text-center">
+        <img src="{{ project.author.profile_image or 'https://via.placeholder.com/80?text=' + project.author.username[0]|upper }}" 
+             alt="{{ project.author.username }}" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+        <h5>{{ project.author.username }}</h5>
+        {% if project.author.bio %}
+        <p class="text-muted small">{{ project.author.bio }}</p>
+        {% endif %}
+        
+        {% if project.author.github_username %}
+        <a href="https://github.com/{{ project.author.github_username }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+          <i class="fab fa-github me-1"></i>GitHub Profile
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if current_user.is_authenticated and current_user.id == project.user_id %}
+    <div class="card bg-dark border-0 shadow-sm">
+      <div class="card-header bg-dark">
+        <h5 class="mb-0">Project Management</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a href="#" class="btn btn-outline-primary">
+            <i class="fas fa-edit me-1"></i>Edit Project
+          </a>
+          <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
+            <i class="fas fa-trash-alt me-1"></i>Delete Project
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Delete Project Modal -->
+    <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteProjectModalLabel">Confirm Deletion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this project? This action cannot be undone.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="#" method="POST">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

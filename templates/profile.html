@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Student Portfolio{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card bg-dark border-0 shadow-sm">
+      <div class="card-header bg-dark">
+        <h2 class="mb-0">Your Profile</h2>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" action="">
+          {{ form.hidden_tag() }}
+          <div class="row mb-3">
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+              <div class="profile-image-container">
+                <img src="{{ current_user.profile_image or 'https://via.placeholder.com/150?text=' + current_user.username[0]|upper }}" 
+                     alt="{{ current_user.username }}" class="profile-image mb-3">
+                <div class="text-center">
+                  <h4>{{ current_user.username }}</h4>
+                  <p class="text-muted">Joined {{ current_user.created_at.strftime('%B %Y') }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {% if form.username.errors %}
+                  {{ form.username(class="form-control is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {{ form.username(class="form-control") }}
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {% if form.email.errors %}
+                  {{ form.email(class="form-control is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {{ form.email(class="form-control") }}
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ form.bio.label(class="form-label") }}
+                {% if form.bio.errors %}
+                  {{ form.bio(class="form-control is-invalid", rows=4) }}
+                  <div class="invalid-feedback">
+                    {% for error in form.bio.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {{ form.bio(class="form-control", rows=4) }}
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ form.github_username.label(class="form-label") }}
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fab fa-github"></i></span>
+                  {% if form.github_username.errors %}
+                    {{ form.github_username(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for error in form.github_username.errors %}
+                        {{ error }}
+                      {% endfor %}
+                    </div>
+                  {% else %}
+                    {{ form.github_username(class="form-control") }}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

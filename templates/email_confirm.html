@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Email Confirmation - Student Portfolio{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+  <div class="text-center mb-4">
+    <i class="fas fa-envelope-open-text fa-5x text-primary mb-3"></i>
+    <h1 class="display-5">Email Verification</h1>
+    <p class="lead">Thank you for registering! A confirmation email has been sent to your email address.</p>
+    <hr>
+    <p>Please check your inbox and click on the confirmation link to verify your email address. If you don't see the email, check your spam folder.</p>
+    <div class="mt-4">
+      <a href="{{ url_for('login') }}" class="btn btn-primary">Return to Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Project - Student Portfolio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-colorpicker@3.4.0/dist/css/bootstrap-colorpicker.min.css">
+<style>
+  .color-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+  
+  .project-preview {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .preview-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>{% if is_new %}Create New Project{% else %}Edit Project{% endif %}</h2>
+      <a href="{{ url_for('portfolio') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Portfolio
+      </a>
+    </div>
+    
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control", placeholder="Enter project title") }}
+                {% for error in form.title.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+              
+              <div class="mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control", rows=5, placeholder="Describe your project") }}
+                {% for error in form.description.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+              
+              <div class="mb-3">
+                {{ form.technologies.label(class="form-label") }}
+                {{ form.technologies(class="form-control", placeholder="e.g. Python, Flask, SQLAlchemy") }}
+                {% for error in form.technologies.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="mb-3">
+                {{ form.repo_url.label(class="form-label") }}
+                {{ form.repo_url(class="form-control", placeholder="https://github.com/username/repo") }}
+                {% for error in form.repo_url.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+              
+              <div class="mb-3">
+                {{ form.live_url.label(class="form-label") }}
+                {{ form.live_url(class="form-control", placeholder="https://your-project-demo.com") }}
+                {% for error in form.live_url.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+              
+              <div class="mb-3">
+                {{ form.project_image.label(class="form-label") }}
+                {{ form.project_image(class="form-control") }}
+                <div class="form-text text-muted">
+                  Upload an image to showcase your project. Recommended size: 800x450 pixels.
+                </div>
+                {% if project and project.image_url %}
+                <div class="mt-2">
+                  <strong>Current image:</strong>
+                  <img src="{{ project.image_url }}" alt="Project Image" class="img-thumbnail mt-2" style="max-width: 200px;">
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="mb-3">
+                {{ form.project_color.label(class="form-label") }}
+                <div class="input-group colorpicker-component" id="project-color-picker">
+                  {{ form.project_color(class="form-control", id="project-color-input") }}
+                  <span class="input-group-text"><i class="fa fa-square color-picker-preview"></i></span>
+                </div>
+                <div class="color-preview mt-2" id="project-color-preview"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <h4>Project Preview</h4>
+            <div class="project-preview" id="project-preview">
+              <div class="text-center mb-3">
+                <img src="{% if project and project.image_url %}{{ project.image_url }}{% else %}https://via.placeholder.com/800x450?text=Project+Image{% endif %}" 
+                     alt="Project Preview" class="preview-image" id="preview-image">
+              </div>
+              
+              <h3 id="preview-title">{{ form.title.data or "Project Title" }}</h3>
+              <p id="preview-description">{{ form.description.data or "Project description will be displayed here." }}</p>
+              
+              <div class="mb-3" id="preview-technologies">
+                {% if form.technologies.data %}
+                  {% for tech in form.technologies.data.split(',') %}
+                  <span class="badge tech-badge me-1">{{ tech.strip() }}</span>
+                  {% endfor %}
+                {% else %}
+                <span class="badge tech-badge me-1">Technology 1</span>
+                <span class="badge tech-badge me-1">Technology 2</span>
+                <span class="badge tech-badge me-1">Technology 3</span>
+                {% endif %}
+              </div>
+              
+              <div class="d-flex justify-content-start">
+                <a href="#" class="btn btn-sm btn-outline-primary me-2">View Details</a>
+                {% if form.repo_url.data %}
+                <a href="{{ form.repo_url.data }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                  <i class="fab fa-github me-1"></i>GitHub
+                </a>
+                {% else %}
+                <a href="#" class="btn btn-sm btn-outline-secondary">
+                  <i class="fab fa-github me-1"></i>GitHub
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2 mt-4">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('portfolio') }}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-colorpicker@3.4.0/dist/js/bootstrap-colorpicker.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize color picker
+    $('#project-color-picker').colorpicker();
+    
+    // Initial preview update
+    updatePreview();
+    
+    // Update preview when inputs change
+    $('#project-color-input, #title, #description, #technologies').on('input', updatePreview);
+    
+    // Function to update the preview
+    function updatePreview() {
+      var projectColor = $('#project-color-input').val();
+      var title = $('#title').val() || "Project Title";
+      var description = $('#description').val() || "Project description will be displayed here.";
+      var technologies = $('#technologies').val();
+      
+      // Update color preview
+      $('#project-color-preview').css('background-color', projectColor);
+      
+      // Update project preview
+      $('#project-preview').css({
+        'background-color': 'rgba(33, 37, 41, 0.9)',
+        'border-left': '4px solid ' + projectColor
+      });
+      
+      $('.tech-badge').css({
+        'background-color': projectColor,
+        'color': getContrastColor(projectColor)
+      });
+      
+      $('.btn-outline-primary').css({
+        'color': projectColor,
+        'border-color': projectColor
+      });
+      
+      $('.btn-outline-primary:hover').css({
+        'background-color': projectColor,
+        'color': getContrastColor(projectColor)
+      });
+      
+      // Update text content
+      $('#preview-title').text(title);
+      $('#preview-description').text(description);
+      
+      // Update technologies
+      if (technologies) {
+        var techsHtml = '';
+        var techs = technologies.split(',');
+        for (var i = 0; i < techs.length; i++) {
+          techsHtml += '<span class="badge tech-badge me-1" style="background-color: ' + projectColor + '; color: ' + getContrastColor(projectColor) + '">' + techs[i].trim() + '</span>';
+        }
+        $('#preview-technologies').html(techsHtml);
+      }
+    }
+    
+    // Preview image upload
+    $('#project_image').on('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          $('#preview-image').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+    
+    // Helper function to determine contrasting text color
+    function getContrastColor(hexcolor) {
+      if (!hexcolor) return '#ffffff';
+      
+      // If hexcolor is in the form #rgb, convert it to #rrggbb
+      if (hexcolor.length === 4) {
+        hexcolor = '#' + hexcolor[1] + hexcolor[1] + hexcolor[2] + hexcolor[2] + hexcolor[3] + hexcolor[3];
+      }
+      
+      var r = parseInt(hexcolor.substring(1, 3), 16);
+      var g = parseInt(hexcolor.substring(3, 5), 16);
+      var b = parseInt(hexcolor.substring(5, 7), 16);
+      var brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      
+      return brightness > 128 ? '#000000' : '#ffffff';
+    }
+  });
+</script>
+{% endblock %}

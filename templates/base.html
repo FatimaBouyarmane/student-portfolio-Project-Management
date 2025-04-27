@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Student Portfolio{% endblock %}</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+  {% if current_user.is_authenticated and current_user.style and not export_mode %}
+  <!-- User Custom Style -->
+  <style>
+    body {
+      font-family: {{ current_user.style.font_family }};
+      background-color: {{ current_user.style.background_color }};
+      {% if current_user.style.background_image %}
+      background-image: url('/{{ current_user.style.background_image }}');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      {% endif %}
+    }
+    
+    .navbar {
+      background-color: {{ current_user.style.primary_color }} !important;
+    }
+    
+    .btn-primary {
+      background-color: {{ current_user.style.primary_color }};
+      border-color: {{ current_user.style.primary_color }};
+    }
+    
+    .btn-secondary {
+      background-color: {{ current_user.style.secondary_color }};
+      border-color: {{ current_user.style.secondary_color }};
+    }
+    
+    .btn-outline-primary {
+      color: {{ current_user.style.primary_color }};
+      border-color: {{ current_user.style.primary_color }};
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: {{ current_user.style.primary_color }};
+      color: #fff;
+    }
+    
+    .btn-outline-secondary {
+      color: {{ current_user.style.secondary_color }};
+      border-color: {{ current_user.style.secondary_color }};
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: {{ current_user.style.secondary_color }};
+      color: #fff;
+    }
+  </style>
+  {% endif %}
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <i class="fas fa-graduation-cap me-2"></i>StudentPortfolio
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('index') %}active{% endif %}" 
+               href="{{ url_for('index') }}">Home</a>
+          </li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('portfolio') %}active{% endif %}" 
+               href="{{ url_for('portfolio') }}">My Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('import_projects') %}active{% endif %}" 
+               href="{{ url_for('import_projects') }}">Import Projects</a>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link notification-badge {% if request.path == url_for('notifications') %}active{% endif %}" 
+               href="{{ url_for('notifications') }}">
+              <i class="fas fa-bell"></i>
+              {% if unread_notifications_count() > 0 %}
+              <span id="notification-badge" class="badge bg-danger badge-counter">{{ unread_notifications_count() }}</span>
+              {% else %}
+              <span id="notification-badge" class="badge bg-danger badge-counter d-none">0</span>
+              {% endif %}
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+               data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('customize_style') }}">Customize Style</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('login') %}active{% endif %}" 
+               href="{{ url_for('login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('register') %}active{% endif %}" 
+               href="{{ url_for('register') }}">Register</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-3 mb-5">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Content Block -->
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer py-4 bg-dark mt-5">
+    <div class="container text-center">
+      <span class="text-muted">Student Portfolio Platform &copy; 2025</span>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JavaScript -->
+  <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

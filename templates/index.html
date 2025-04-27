@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Student Portfolio - Showcase Your Projects{% endblock %}
+
+{% block content %}
+<div class="row align-items-center justify-content-between py-5">
+  <div class="col-lg-6">
+    <h1 class="display-4 fw-bold mb-4">Showcase Your Student Projects</h1>
+    <p class="lead mb-4">Build a professional portfolio to highlight your skills and academic projects. Import directly from GitHub and share your work with the world.</p>
+    <div class="d-grid gap-3 d-sm-flex">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('portfolio') }}" class="btn btn-primary btn-lg px-4">My Portfolio</a>
+        <a href="{{ url_for('import_projects') }}" class="btn btn-outline-light btn-lg px-4">Import Projects</a>
+      {% else %}
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-5 d-none d-lg-block">
+    <div class="text-center">
+      <svg width="450" height="350" viewBox="0 0 450 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- SVG illustration of a student working on projects -->
+        <rect x="50" y="50" width="350" height="250" rx="10" fill="#343a40" stroke="#6c757d" stroke-width="2"/>
+        <rect x="70" y="80" width="200" height="150" rx="5" fill="#495057"/>
+        <rect x="290" y="80" width="90" height="90" rx="5" fill="#6c757d"/>
+        <rect x="290" y="180" width="90" height="50" rx="5" fill="#6c757d"/>
+        <circle cx="170" cy="260" r="15" fill="#0d6efd"/>
+        <circle cx="220" cy="260" r="15" fill="#6610f2"/>
+        <circle cx="270" cy="260" r="15" fill="#dc3545"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="row py-5">
+  <div class="col-12 text-center mb-5">
+    <h2 class="fw-bold">Features</h2>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 bg-dark border-0">
+      <div class="card-body text-center p-4">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3">
+          <i class="fas fa-code fa-3x text-primary"></i>
+        </div>
+        <h3 class="fs-4 fw-bold">GitHub Integration</h3>
+        <p>Import your projects directly from GitHub with just a few clicks. All your repositories are automatically converted to portfolio projects.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 bg-dark border-0">
+      <div class="card-body text-center p-4">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3">
+          <i class="fas fa-mobile-alt fa-3x text-primary"></i>
+        </div>
+        <h3 class="fs-4 fw-bold">Responsive Design</h3>
+        <p>Your portfolio will look great on any device - desktop, tablet, or mobile. Showcase your work professionally across all platforms.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 bg-dark border-0">
+      <div class="card-body text-center p-4">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3">
+          <i class="fas fa-bell fa-3x text-primary"></i>
+        </div>
+        <h3 class="fs-4 fw-bold">Notifications</h3>
+        <p>Stay updated with real-time notifications when someone comments on your projects or provides feedback on your work.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row py-5 bg-dark rounded-3 p-4 mb-5">
+  <div class="col-12 text-center mb-4">
+    <h2 class="fw-bold">How It Works</h2>
+  </div>
+
+  <div class="col-md-3 mb-4 text-center">
+    <div class="step-circle bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+      <i class="fas fa-user-plus fa-2x text-white"></i>
+    </div>
+    <h4>1. Create Account</h4>
+    <p>Sign up and verify your email address</p>
+  </div>
+
+  <div class="col-md-3 mb-4 text-center">
+    <div class="step-circle bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+      <i class="fab fa-github fa-2x text-white"></i>
+    </div>
+    <h4>2. Connect GitHub</h4>
+    <p>Import your repositories</p>
+  </div>
+
+  <div class="col-md-3 mb-4 text-center">
+    <div class="step-circle bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+      <i class="fas fa-edit fa-2x text-white"></i>
+    </div>
+    <h4>3. Customize</h4>
+    <p>Edit project details and descriptions</p>
+  </div>
+
+  <div class="col-md-3 mb-4 text-center">
+    <div class="step-circle bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+      <i class="fas fa-share-alt fa-2x text-white"></i>
+    </div>
+    <h4>4. Share</h4>
+    <p>Share your portfolio with everyone</p>
+  </div>
+  
+  <div class="col-12 text-center mt-4">
+    <a href="{{ url_for('download_source') }}" class="btn btn-info btn-lg">
+      <i class="fas fa-download me-2"></i>Download Source Code
+    </a>
+    <p class="text-muted mt-2">Get the complete source code of this application</p>
+  </div>
+</div>
+{% endblock %}

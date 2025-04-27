@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Import GitHub Projects - Student Portfolio{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Select/Unselect all repositories
+    const selectAllBtn = document.getElementById('select-all-repos');
+    const unselectAllBtn = document.getElementById('unselect-all-repos');
+    const repoCheckboxes = document.querySelectorAll('.repo-checkbox');
+    
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener('click', function() {
+        repoCheckboxes.forEach(checkbox => {
+          if (!checkbox.closest('.repo-item').classList.contains('d-none')) {
+            checkbox.checked = true;
+          }
+        });
+      });
+    }
+    
+    if (unselectAllBtn) {
+      unselectAllBtn.addEventListener('click', function() {
+        repoCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      });
+    }
+    
+    // Repository search functionality
+    const repoSearch = document.getElementById('repo-search');
+    const repoItems = document.querySelectorAll('.repo-item');
+    
+    if (repoSearch) {
+      repoSearch.addEventListener('keyup', function() {
+        const searchTerm = repoSearch.value.toLowerCase();
+        
+        repoItems.forEach(item => {
+          const repoName = item.querySelector('.repo-name').textContent.toLowerCase();
+          const repoDesc = item.querySelector('.repo-description').textContent.toLowerCase();
+          
+          if (repoName.includes(searchTerm) || repoDesc.includes(searchTerm)) {
+            item.classList.remove('d-none');
+          } else {
+            item.classList.add('d-none');
+          }
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card bg-dark border-0 shadow-sm">
+      <div class="card-header bg-dark">
+        <h2><i class="fab fa-github me-2"></i>Import GitHub Projects</h2>
+      </div>
+      <div class="card-body p-4">
+        <form id="import-github-form" method="POST" action="">
+          <div class="mb-4">
+            <label for="github_username" class="form-label">GitHub Username</label>
+            <input type="text" class="form-control" id="github_username" name="github_username" required 
+                  value="{{ current_user.github_username or '' }}" placeholder="Enter your GitHub username">
+          </div>
+          
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary mb-4">Fetch Repositories</button>
+          </div>
+          
+          {% if repos is defined and repos %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4>Select Repositories to Import</h4>
+              <div>
+                <button type="button" id="select-all-repos" class="btn btn-sm btn-outline-secondary me-2">Select All</button>
+                <button type="button" id="unselect-all-repos" class="btn btn-sm btn-outline-secondary">Unselect All</button>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <input type="text" id="repo-search" class="form-control" placeholder="Search repositories...">
+            </div>
+            
+            <div class="list-group">
+              {% for repo in repos %}
+              <div class="list-group-item bg-dark border-secondary repo-item">
+                <div class="d-flex align-items-center">
+                  <div class="form-check">
+                    <input class="form-check-input repo-checkbox" type="checkbox" name="repos" value="{{ repo.name }}" id="repo-{{ repo.name }}">
+                  </div>
+                  <div class="ms-3">
+                    <h5 class="mb-1 repo-name">{{ repo.name }}</h5>
+                    <p class="mb-1 small repo-description">{{ repo.description or "No description available" }}</p>
+                    <small>
+                      <i class="fas fa-code-branch me-1"></i>{{ repo.fork_count }}
+                      <i class="fas fa-star ms-3 me-1"></i>{{ repo.star_count }}
+                      <span class="ms-3">Updated {{ repo.updated_at }}</span>
+                    </small>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-success">Import Selected Repositories</button>
+            </div>
+          </div>
+          {% elif repos is defined and repos|length == 0 %}
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No repositories found for this GitHub username.
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

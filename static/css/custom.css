@@ -1,0 +1,114 @@
+/* Custom styles for Student Portfolio Platform */
+
+/* Notification badge */
+.notification-badge {
+  position: relative;
+  display: inline-block;
+}
+
+.badge-counter {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.75rem;
+}
+
+/* Project card hover effect */
+.project-card {
+  transition: transform 0.3s ease-in-out;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Comments section */
+.comment-item {
+  border-left: 3px solid var(--bs-primary);
+  padding-left: 15px;
+  margin-bottom: 15px;
+}
+
+/* User profile image */
+.profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--bs-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* GitHub import selection */
+.repo-checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+/* Loading spinner */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Confirmation page styles */
+.confirmation-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* Error page styles */
+.error-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* Style Customization Page */
+.color-preview {
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.font-preview {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#style-preview {
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sample-primary-btn {
+  margin-right: 10px;
+}
+
+.color-picker-preview {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
